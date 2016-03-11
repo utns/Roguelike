@@ -5,6 +5,7 @@
 #include <vector>
 #include "characters.h"
 #include "map.h"
+#include "controller.h"
 
 using namespace std;
 
@@ -125,16 +126,15 @@ void Map::find_path(int x, int y)
             path[i][j] = 0;
         }
     }
-    int dir[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}}; 
     queue <pair <int, int> > wave;
     wave.push(make_pair(x, y));
     path[y][x] = 1;
     while (!wave.empty())
     {
         pair <int, int> cur_elem = wave.front();
-        for (int i = 0; i < 4; ++i)
+        for (auto &it: Controller::instance().get_directions())
         {
-            pair <int, int> next_elem = make_pair(cur_elem.first + dir[i][0], cur_elem.second + dir[i][1]); 
+            pair <int, int> next_elem = make_pair(cur_elem.first + (it.second).first, cur_elem.second + (it.second).second); 
             if (!is_wall(next_elem.first, next_elem.second) && !path[next_elem.second][next_elem.first])
             {
                 path[next_elem.second][next_elem.first] = path[cur_elem.second][cur_elem.first] + 1;

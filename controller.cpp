@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <iostream>
+#include <string>
 #include "map"
 #include "characters.h"
 #include "controller.h"
@@ -55,6 +56,7 @@ void Controller::game_loop()
         system("clear");
         map.display();
         print_log();
+        cout << monsters.size() << endl;
         hit_log.clear();
         cout << "HP: " << knight->get_hp() << endl;
         knight->move(map);
@@ -134,3 +136,17 @@ void Controller::push_log(string s)
 {
     hit_log.push_back(s);
 }
+
+const std::map <std::string, std::pair <int, int> > &Controller::get_directions()
+{
+    return directions;
+}
+
+map <string, pair <int, int> > Controller::directions = 
+{
+    {"a", std::make_pair(-1, 0)},
+    {"w", std::make_pair(0, -1)},
+    {"d", std::make_pair(1, 0)},
+    {"s", std::make_pair(0, 1)},
+};  
+

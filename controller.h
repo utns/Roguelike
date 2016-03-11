@@ -5,8 +5,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 class Controller
 {   
     public:
@@ -16,17 +14,19 @@ class Controller
         void monsters_move();
         int find_monster(int x, int y);
         void delete_monster(int x, int y);
-        void push_log(string s);
+        void push_log(std::string s);
         void print_log();
         static Controller& instance();
         Knight &get_knight();
         Princess &get_princess();
         Monster &get_monster(int x, int y);
+        const static std::map <std::string, std::pair <int, int> > &get_directions();
     private:
-        Controller(string file_name): map(file_name) {};
+        Controller(std::string file_name): map(file_name) {};
         Map map;
         Knight *knight;
         Princess *princess;
-        vector <Monster*> monsters;
-        vector <string> hit_log;
+        std::vector <Monster*> monsters;
+        std::vector <std::string> hit_log;
+        static std::map <std::string, std::pair <int, int> > directions;
 };

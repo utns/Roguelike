@@ -25,7 +25,6 @@ class Character
     protected:
         int x, y;
         int hp, damage;
-        static std::map <std::string, std::pair <int, int> > directions;
 };
 
 class Knight: public Character
