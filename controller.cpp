@@ -6,6 +6,7 @@
 #include "map"
 #include "characters.h"
 #include "controller.h"
+#include "ncurses.h"
 
 using namespace std;
 
@@ -53,25 +54,24 @@ void Controller::game_loop()
     bool game_over = false;
     while(!game_over)
     {
-        system("clear");
+        clear();
         map.display();
         print_log();
-        cout << monsters.size() << endl;
         hit_log.clear();
-        cout << "HP: " << knight->get_hp() << endl;
+        printw("HP: %d\n", knight->get_hp());
         knight->move(map);
         map.find_path(knight->get_x(), knight->get_y());
         monsters_move();
         if (princess->get_hp() <= 0)
         {
-            system("clear");
-            cout << "YOU WIN!!!" << endl;
+            clear();
+            printw("YOU WIN!!\n");
             game_over = true;
         }
         else if (knight->get_hp() <= 0)
         {
-            system("clear");
-            cout << "YOU LOSE!!!" << endl;
+            clear();
+            printw("YOU LOSE!!!\n");
             game_over = true;
         }
     }
@@ -107,7 +107,7 @@ void Controller::print_log()
 {
     for (int i = 0; i < hit_log.size(); ++i)
     {
-        cout << hit_log[i] << endl;
+        printw("%s\n", hit_log[i].c_str()); 
     }
 }
 
@@ -144,9 +144,13 @@ const std::map <std::string, std::pair <int, int> > &Controller::get_directions(
 
 map <string, pair <int, int> > Controller::directions = 
 {
-    {"a", std::make_pair(-1, 0)},
     {"w", std::make_pair(0, -1)},
-    {"d", std::make_pair(1, 0)},
+    {"a", std::make_pair(-1, 0)},
     {"s", std::make_pair(0, 1)},
+    {"d", std::make_pair(1, 0)},
+    {"y", std::make_pair(-1, -1)},
+    {"u", std::make_pair(1, -1)},
+    {"b", std::make_pair(-1, 1)},
+    {"n", std::make_pair(1, 1)},
 };  
 

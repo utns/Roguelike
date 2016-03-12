@@ -5,6 +5,7 @@
 #include "map.h"
 #include "characters.h"
 #include "controller.h"
+#include "ncurses.h"
 
 using namespace std;
 
@@ -42,8 +43,8 @@ void Character::set_coordinate(int X, int Y, Map &map)
 
 void Knight::move(Map &map)
 {
-	string command; 
-	cin >> command;
+    string command;
+    command = string(1, getch());
 	auto dir = Controller::instance().get_directions().find(command);
 	if (dir == Controller::instance().get_directions().end())
 	{

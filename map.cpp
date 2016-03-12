@@ -6,6 +6,7 @@
 #include "characters.h"
 #include "map.h"
 #include "controller.h"
+#include "ncurses.h"
 
 using namespace std;
 
@@ -32,9 +33,9 @@ void Map::display()
     {
         for (int j = 0; j < w; ++j)
         {
-            cout << source[i][j];
+            printw("%c", source[i][j]);
         }
-        cout << endl;
+        printw("\n");
     }
 }
 
