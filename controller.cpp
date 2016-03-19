@@ -60,7 +60,7 @@ void Controller::game_loop()
         hit_log.clear();
         printw("HP: %d\n", knight->get_hp());
         knight->move(map);
-        map.find_path(knight->get_x(), knight->get_y());
+        map.find_path(knight->get_point());
         monsters_move();
         if (princess->get_hp() <= 0)
         {
@@ -85,20 +85,20 @@ void Controller::monsters_move()
     }
 }
 
-int Controller::find_monster(int x, int y)
+int Controller::find_monster(Point point)
 {
     for (int i = 0; i < monsters.size(); ++i)
     {
-        if (monsters[i]->get_x() == x && monsters[i]->get_y() == y)
+        if (monsters[i]->get_point() == point)
         {
             return i;
         }
     }
 }    
 
-void Controller::delete_monster(int x, int y)
+void Controller::delete_monster(Point point)
 {
-    int i = find_monster(x, y);
+    int i = find_monster(point);
     delete monsters[i];
     monsters.erase(monsters.begin() + i);
 }
@@ -127,9 +127,9 @@ Princess& Controller::get_princess()
     return *princess;
 }
 
-Monster& Controller::get_monster(int x, int y)
+Monster & Controller::get_monster(Point point)
 {
-    return *monsters[find_monster(x, y)];
+    return *monsters[find_monster(point)];
 }
 
 void Controller::push_log(string s)
@@ -137,20 +137,20 @@ void Controller::push_log(string s)
     hit_log.push_back(s);
 }
 
-const std::map <std::string, std::pair <int, int> > &Controller::get_directions()
+const std::map <std::string, Point > &Controller::get_directions()
 {
     return directions;
 }
 
-map <string, pair <int, int> > Controller::directions = 
+map <string, Point > Controller::directions =
 {
-    {"w", std::make_pair(0, -1)},
-    {"a", std::make_pair(-1, 0)},
-    {"s", std::make_pair(0, 1)},
-    {"d", std::make_pair(1, 0)},
-    {"y", std::make_pair(-1, -1)},
-    {"u", std::make_pair(1, -1)},
-    {"b", std::make_pair(-1, 1)},
-    {"n", std::make_pair(1, 1)},
+    {"k", Point(0, -1)},
+    {"h", Point(-1, 0)},
+    {"j", Point(0, 1)},
+    {"l", Point(1, 0)},
+    {"y", Point(-1, -1)},
+    {"u", Point(1, -1)},
+    {"b", Point(-1, 1)},
+    {"n", Point(1, 1)},
 };  
 

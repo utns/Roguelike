@@ -1,5 +1,6 @@
 next_task_game.txt
 /build
+/.idea
 game.sublime-project
 game.sublime-workspace
 CMakeLists.txt.user

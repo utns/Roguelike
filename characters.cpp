@@ -6,6 +6,7 @@
 #include "characters.h"
 #include "controller.h"
 #include "ncurses.h"
+#include "Point.h"
 
 using namespace std;
 
@@ -24,21 +25,15 @@ void Character::set_hp(int Hp)
 	hp = Hp;
 }
 
-int Character::get_x() const
+Point Character::get_point() const
 {
-	return x;
+	return point;
 }
 
-int Character::get_y() const
+void Character::set_coordinate(Point new_point, Map &map)
 {
-	return y;
-}
-
-void Character::set_coordinate(int X, int Y, Map &map)
-{
-    map.move(x, y, X, Y);
-    x = X;
-    y = Y; 
+    map.move(point, new_point);
+    point = new_point;
 }
 
 void Knight::move(Map &map)
@@ -50,28 +45,28 @@ void Knight::move(Map &map)
 	{
 		return;
 	}
-    int new_x = x + (dir->second).first;
-    int new_y = y + (dir->second).second;
-    if (!map.is_wall(new_x, new_y))
+    Point new_point = point + dir->second;
+    if (!map.is_wall(new_point))
     {
-        if (map.is_princess(new_x, new_y))
+        if (map.is_princess(new_point))
         {
             Controller::instance().get_princess().set_hp(-1);
         }
-        else if (map.is_monster(new_x, new_y))
+        else if (map.is_monster(new_point))
         {
-        	Monster &monster = Controller::instance().get_monster(new_x, new_y);
+        	Monster &monster = Controller::instance().get_monster(new_point);
             monster.set_hp(monster.get_hp() - damage);  
-            Controller::instance().push_log("You attack " + string(1, monster.get_symbol()) + " " + to_string(get_damage()) + " (" + to_string(monster.get_hp())+ " hp)");
+            Controller::instance().push_log("You attack " + string(1, monster.get_symbol()) + " " 
+                + to_string(get_damage()) + " (" + to_string(monster.get_hp())+ " hp)");
             if (monster.get_hp() <= 0)
             {
-                Controller::instance().delete_monster(new_x, new_y);
-                set_coordinate(new_x, new_y, map);
+                Controller::instance().delete_monster(new_point);
+                set_coordinate(new_point, map);
             }
         } 
         else 
         {
-            set_coordinate(new_x, new_y, map);
+            set_coordinate(new_point, map);
         }
     }
 }
@@ -90,27 +85,24 @@ void Monster::move(Map &map)
 {
 	vector < vector <int> > path = map.get_path();
 	int min_path = INT_MAX;
-    int new_x = x;
-    int new_y = y;
+    Point new_point = point;
 	for (auto &it: Controller::instance().get_directions())
 	{
-		int t_x = x + (it.second).first;
-		int t_y = y + (it.second).second;
-		if (path[t_y][t_x] < min_path && (map.is_empty(t_x, t_y) || map.is_knight(t_x, t_y)))
+		Point t_point = point + (it.second);
+		if (path[t_point.y][t_point.x] < min_path && (map.is_empty(t_point) || map.is_knight(t_point)))
 		{
-			min_path = path[t_y][t_x];
-		    new_x = t_x;
-		    new_y = t_y;
+			min_path = path[t_point.y][t_point.x];
+		    new_point = t_point;
 		}
 	}
-    if (map.is_knight(new_x, new_y)) 
+    if (map.is_knight(new_point))
     {
         Controller::instance().push_log(string(1, get_symbol()) + " attack you " + to_string(damage));
         Controller::instance().get_knight().set_hp(Controller::instance().get_knight().get_hp() - damage);
     }
     else 
     {
-        set_coordinate(new_x, new_y, map);
+        set_coordinate(new_point, map);
     }
 }
 

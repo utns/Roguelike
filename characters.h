@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include "map.h"
+#include "Point.h"
 
 #define KNIGHT_SYMBOL 'K'
 #define PRINCESS_SYMBOL 'P'
@@ -12,18 +13,17 @@
 class Character
 {
     public:
-        Character(int x, int y): x(x), y(y) {};
+        Character(int x, int y): point(x, y) {};
         virtual void move(Map &map) = 0;
         virtual char get_symbol() const = 0;
         int get_hp() const;
         void set_hp(int Hp);
         int get_damage() const;
-        int get_x() const;
-        int get_y() const;
-        void set_coordinate(int X, int Y, Map &map);
+        Point get_point() const;
+        void set_coordinate(Point new_point, Map &map);
         virtual ~Character() {};
     protected:
-        int x, y;
+        Point point;
         int hp, damage;
 };
 

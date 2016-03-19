@@ -39,9 +39,9 @@ void Map::display()
     }
 }
 
-bool Map::is_wall(int x, int y) const
+bool Map::is_wall(Point point) const
 {
-    if (source[y][x] == '#')
+    if (source[point.y][point.x] == '#')
     {
         return true;
     }
@@ -51,9 +51,9 @@ bool Map::is_wall(int x, int y) const
     }
 }
 
-bool Map::is_princess(int x, int y) const
+bool Map::is_princess(Point point) const
 {
-    if (source[y][x] == PRINCESS_SYMBOL)
+    if (source[point.y][point.x] == PRINCESS_SYMBOL)
     {
         return true;
     }
@@ -63,9 +63,9 @@ bool Map::is_princess(int x, int y) const
     }
 }
 
-bool Map::is_monster(int x, int y) const
+bool Map::is_monster(Point point) const
 {
-    if (source[y][x] == ZOMBIE_SYMBOL || source[y][x] == DRAGON_SYMBOL)
+    if (source[point.y][point.x] == ZOMBIE_SYMBOL || source[point.y][point.x] == DRAGON_SYMBOL)
     {
         return true;
     }
@@ -75,9 +75,9 @@ bool Map::is_monster(int x, int y) const
     }
 }
 
-bool Map::is_empty(int x, int y) const
+bool Map::is_empty(Point point) const
 {
-    if (source[y][x] == '.')
+    if (source[point.y][point.x] == '.')
     {
         return true;
     }
@@ -87,9 +87,9 @@ bool Map::is_empty(int x, int y) const
     }
 }
 
-bool Map::is_knight(int x, int y) const
+bool Map::is_knight(Point point) const
 {
-    if (source[y][x] == KNIGHT_SYMBOL)
+    if (source[point.y][point.x] == KNIGHT_SYMBOL)
     {
         return true;
     }
@@ -99,12 +99,12 @@ bool Map::is_knight(int x, int y) const
     }
 }
 
-void Map::move(int x1, int y1, int x2, int y2)
+void Map::move(Point point1, Point point2)
 {
-    source[y2][x2] = source[y1][x1];
-    if (x1 != x2 || y1 != y2)
+    source[point2.y][point2.x] = source[point1.y][point1.x];
+    if (point1.x != point2.x || point1.y != point2.y)
     {
-        source[y1][x1] = '.';
+        source[point1.y][point1.x] = '.';
     }
 }
 
@@ -118,7 +118,7 @@ const std::vector < std::vector <int> >& Map::get_path() const
     return path;
 }
 
-void Map::find_path(int x, int y)
+void Map::find_path(Point point)
 {
     for (int i = 0; i < h; ++i)
     {
@@ -127,18 +127,18 @@ void Map::find_path(int x, int y)
             path[i][j] = 0;
         }
     }
-    queue <pair <int, int> > wave;
-    wave.push(make_pair(x, y));
-    path[y][x] = 1;
+    queue < Point > wave;
+    wave.push(point);
+    path[point.y][point.x] = 1;
     while (!wave.empty())
     {
-        pair <int, int> cur_elem = wave.front();
+        Point cur_elem = wave.front();
         for (auto &it: Controller::instance().get_directions())
         {
-            pair <int, int> next_elem = make_pair(cur_elem.first + (it.second).first, cur_elem.second + (it.second).second); 
-            if (!is_wall(next_elem.first, next_elem.second) && !path[next_elem.second][next_elem.first])
+            Point next_elem = cur_elem + it.second;
+            if (!is_wall(next_elem) && !path[next_elem.y][next_elem.x])
             {
-                path[next_elem.second][next_elem.first] = path[cur_elem.second][cur_elem.first] + 1;
+                path[next_elem.y][next_elem.x] = path[cur_elem.y][cur_elem.x] + 1;
                 wave.push(next_elem);
             }
         }

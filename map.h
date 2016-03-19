@@ -2,21 +2,22 @@
 
 #include <string>
 #include <vector>
+#include "Point.h"
 
 class Map
 {
     public:
         Map(std::string file_name);
         void display();
-        bool is_wall(int x, int y) const;
-        bool is_princess(int x, int y) const;
-        bool is_monster(int x, int y) const;
-        bool is_empty(int x, int y) const;
-        bool is_knight(int x, int y) const;
-        void move(int x1, int y1, int x2, int y2);
+        bool is_wall(Point point) const;
+        bool is_princess(Point point) const;
+        bool is_monster(Point point) const;
+        bool is_empty(Point point) const;
+        bool is_knight(Point point) const;
+        void move(Point point1, Point point2);
         const std::vector < std::vector <char> > &get_source() const;
         const std::vector < std::vector <int> > &get_path() const;
-        void find_path(int x, int y);
+        void find_path(Point point);
         int get_width() const;
         int get_hight() const;
     private:
