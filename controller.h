@@ -22,6 +22,7 @@ class Controller
         Princess &get_princess();
         Monster &get_monster(Point point);
         const static std::map <std::string, Point > &get_directions();
+        Character *find_character(Point point);
     private:
         Controller(std::string file_name): map(file_name) {};
         Map map;

@@ -10,6 +10,10 @@
 
 using namespace std;
 
+void collide(Character *left, Character *right)
+{
+    left->collide(right);
+}
 int Character::get_damage() const
 {
 	return damage;
@@ -30,9 +34,9 @@ Point Character::get_point() const
 	return point;
 }
 
-void Character::set_coordinate(Point new_point, Map &map)
+void Character::set_coordinate(Point new_point)
 {
-    map.move(point, new_point);
+    Controller::instance().get_map().move(point, new_point);
     point = new_point;
 }
 
@@ -48,25 +52,14 @@ void Knight::move(Map &map)
     Point new_point = point + dir->second;
     if (!map.is_wall(new_point))
     {
-        if (map.is_princess(new_point))
+        Character *character = Controller::instance().find_character(new_point);
+        if (character != nullptr)
         {
-            Controller::instance().get_princess().set_hp(-1);
+			this->collide(character);
         }
-        else if (map.is_monster(new_point))
+        if (Controller::instance().find_character(new_point) == nullptr)
         {
-        	Monster &monster = Controller::instance().get_monster(new_point);
-            monster.set_hp(monster.get_hp() - damage);  
-            Controller::instance().push_log("You attack " + string(1, monster.get_symbol()) + " " 
-                + to_string(get_damage()) + " (" + to_string(monster.get_hp())+ " hp)");
-            if (monster.get_hp() <= 0)
-            {
-                Controller::instance().delete_monster(new_point);
-                set_coordinate(new_point, map);
-            }
-        } 
-        else 
-        {
-            set_coordinate(new_point, map);
+            set_coordinate(new_point);
         }
     }
 }
@@ -76,10 +69,32 @@ char Knight::get_symbol() const
 	return KNIGHT_SYMBOL;
 }
 
+void Knight::collide(Character *character)
+{
+    character->collide(this);
+}
+
+void Knight::collide(Monster *monster)
+{
+    Controller::instance().push_log(string(1, monster->get_symbol()) + " attack you " + to_string(monster->get_damage()));
+    hp -= monster->get_damage();
+}
+
 char Princess::get_symbol() const
 {
 	return PRINCESS_SYMBOL;
 }
+
+void Princess::collide(Character *character)
+{
+    character->collide(this);
+}
+
+void Princess::collide(Knight *knight)
+{
+    hp = -1;
+}
+
 
 void Monster::move(Map &map)
 {
@@ -95,16 +110,33 @@ void Monster::move(Map &map)
 		    new_point = t_point;
 		}
 	}
-    if (map.is_knight(new_point))
+    Character *character = Controller::instance().find_character(new_point);
+    if (character != nullptr)
     {
-        Controller::instance().push_log(string(1, get_symbol()) + " attack you " + to_string(damage));
-        Controller::instance().get_knight().set_hp(Controller::instance().get_knight().get_hp() - damage);
+        collide(character);
     }
-    else 
+    else
     {
-        set_coordinate(new_point, map);
+        set_coordinate(new_point);
     }
 }
+
+void Monster::collide(Knight *knight)
+{
+    hp -= knight->get_damage();
+    Controller::instance().push_log("You attack " + string(1, get_symbol()) + " "
+                                    + to_string(get_damage()) + " (" + to_string(hp)+ " hp)");
+    if (hp <= 0)
+    {
+        Controller::instance().delete_monster(point);
+    }
+}
+
+void Monster::collide(Character *character)
+{
+    character->collide(this);
+}
+
 
 char Dragon::get_symbol() const
 {

@@ -152,5 +152,30 @@ map <string, Point > Controller::directions =
     {"u", Point(1, -1)},
     {"b", Point(-1, 1)},
     {"n", Point(1, 1)},
-};  
+};
+
+Character *Controller::find_character(Point point)
+{
+    if (princess->get_point() == point)
+    {
+        return princess;
+    }
+    else if (knight->get_point() == point)
+    {
+        return knight;
+    }
+    else
+    {
+        for (int i = 0; i < monsters.size(); ++i)
+        {
+            if (monsters[i]->get_point() == point)
+            {
+                return monsters[i];
+            }
+        }
+    }
+    return nullptr;
+}
+
+
 
