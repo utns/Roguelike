@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void collide(Character *left, Character *right)
+void collide(Actor *left, Actor *right)
 {
     left->collide(right);
 }
@@ -28,6 +28,12 @@ void Character::set_hp(int Hp)
 {
 	hp = Hp;
 }
+
+int Character::get_max_hp() const
+{
+    return max_hp;
+}
+
 
 Point Actor::get_point() const
 {
@@ -52,12 +58,12 @@ void Knight::move(Map &map)
     Point new_point = point + dir->second;
     if (!map.is_wall(new_point))
     {
-        Character *character = Controller::instance().find_character(new_point);
-        if (character != nullptr)
+        Actor *actor = Controller::instance().get_actor(new_point);
+        if (actor != nullptr)
         {
-			this->collide(character);
+			this->collide(actor);
         }
-        if (Controller::instance().find_character(new_point) == nullptr)
+        if (Controller::instance().get_actor(new_point) == nullptr)
         {
             set_coordinate(new_point);
         }
@@ -69,9 +75,9 @@ char Knight::get_symbol() const
 	return KNIGHT_SYMBOL;
 }
 
-void Knight::collide(Actor *character)
+void Knight::collide(Actor *actor)
 {
-    character->collide(this);
+    actor->collide(this);
 }
 
 void Knight::collide(Monster *monster)
@@ -85,9 +91,9 @@ char Princess::get_symbol() const
 	return PRINCESS_SYMBOL;
 }
 
-void Princess::collide(Actor *character)
+void Princess::collide(Actor *actor)
 {
-    character->collide(this);
+    actor->collide(this);
 }
 
 void Princess::collide(Knight *knight)
@@ -104,18 +110,19 @@ void Monster::move(Map &map)
 	for (auto &it: Controller::instance().get_directions())
 	{
 		Point t_point = point + (it.second);
-		if (path[t_point.y][t_point.x] < min_path && (map.is_empty(t_point) || map.is_knight(t_point)))
+		if (path[t_point.y][t_point.x] < min_path && ((!map.is_monster(t_point) && !map.is_wall(t_point) && !map.is_princess(t_point))
+                                                      || map.is_knight(t_point)))
 		{
 			min_path = path[t_point.y][t_point.x];
 		    new_point = t_point;
 		}
 	}
-    Character *character = Controller::instance().find_character(new_point);
-    if (character != nullptr)
+    Actor *actor = Controller::instance().get_actor(new_point);
+    if (actor != nullptr)
     {
-        collide(character);
+        collide(actor);
     }
-    else
+    if (Controller::instance().get_actor(new_point) == nullptr)
     {
         set_coordinate(new_point);
     }
@@ -128,13 +135,13 @@ void Monster::collide(Knight *knight)
                                     + to_string(get_damage()) + " (" + to_string(hp)+ " hp)");
     if (hp <= 0)
     {
-        Controller::instance().delete_monster(point);
+        Controller::instance().delete_actor(point);
     }
 }
 
-void Monster::collide(Actor *character)
+void Monster::collide(Actor *actor)
 {
-    character->collide(this);
+    actor->collide(this);
 }
 
 
@@ -147,3 +154,38 @@ char Zombie::get_symbol() const
 {
 	return ZOMBIE_SYMBOL;
 }
+
+char MedKit::get_symbol() const
+{
+    return MEDKIT_SYMBOL;
+}
+
+void MedKit::collide(Actor *actor)
+{
+    actor->collide(this);
+}
+
+void MedKit::collide(Knight *knight)
+{
+    collide(static_cast<Character*>(knight));
+}
+
+void MedKit::collide(Monster *monster)
+{
+    Controller::instance().push_log("Monster take medkit " + to_string(monster->get_point().x) + " " + to_string(monster->get_point().y) +
+        monster->get_symbol());
+    collide(static_cast<Character*>(monster));
+}
+
+void MedKit::collide(Character *character)
+{
+    character->set_hp((character->get_hp() + hp_restore));
+    if (character->get_hp() > character->get_max_hp())
+    {
+        character->set_hp(character->get_max_hp());
+    }
+    Controller::instance().delete_actor(point);
+    Controller::instance().medkit_count_dec();
+}
+
+

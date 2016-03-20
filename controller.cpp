@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <iostream>
+#include <time.h>
 #include <string>
 #include "map"
 #include "characters.h"
@@ -36,12 +37,18 @@ void Controller::find_characters()
                 }
                 case DRAGON_SYMBOL:
                 {
-                    monsters.push_back(new Dragon(j, i));
+                    actors.push_back(new Dragon(j, i));
                     break;
                 }
                 case ZOMBIE_SYMBOL:
                 {
-                    monsters.push_back(new Zombie(j, i));
+                    actors.push_back(new Zombie(j, i));
+                    break;
+                }
+                case MEDKIT_SYMBOL:
+                {
+                    ++medkit_count;
+                    actors.push_back(new MedKit(j, i));
                     break;
                 }
             }
@@ -61,7 +68,14 @@ void Controller::game_loop()
         printw("HP: %d\n", knight->get_hp());
         knight->move(map);
         map.find_path(knight->get_point());
-        monsters_move();
+        for (auto actor: actors)
+        {
+            actor->move(map);
+        }
+        if (medkit_spawn_cooldown <= 0 && medkit_count < 5)
+        {
+            spawn_medkit();
+        }
         if (princess->get_hp() <= 0)
         {
             clear();
@@ -74,33 +88,26 @@ void Controller::game_loop()
             printw("YOU LOSE!!!\n");
             game_over = true;
         }
+        --medkit_spawn_cooldown;
     }
 }
 
-void Controller::monsters_move()
+int Controller::get_actor_num(Point point)
 {
-    for (int i = 0; i < monsters.size(); ++i)
+    for (int i = 0; i < actors.size(); ++i)
     {
-        monsters[i]->move(map);
-    }
-}
-
-int Controller::find_monster(Point point)
-{
-    for (int i = 0; i < monsters.size(); ++i)
-    {
-        if (monsters[i]->get_point() == point)
+        if (actors[i]->get_point() == point)
         {
             return i;
         }
     }
 }    
 
-void Controller::delete_monster(Point point)
+void Controller::delete_actor(Point point)
 {
-    int i = find_monster(point);
-    delete monsters[i];
-    monsters.erase(monsters.begin() + i);
+    int i = get_actor_num(point);
+    delete actors[i];
+    actors.erase(actors.begin() + i);
 }
 
 void Controller::print_log()
@@ -127,11 +134,6 @@ Princess& Controller::get_princess()
     return *princess;
 }
 
-Monster & Controller::get_monster(Point point)
-{
-    return *monsters[find_monster(point)];
-}
-
 void Controller::push_log(string s)
 {
     hit_log.push_back(s);
@@ -154,7 +156,7 @@ map <string, Point > Controller::directions =
     {"n", Point(1, 1)},
 };
 
-Character *Controller::find_character(Point point)
+Actor * Controller::get_actor(Point point)
 {
     if (princess->get_point() == point)
     {
@@ -166,16 +168,39 @@ Character *Controller::find_character(Point point)
     }
     else
     {
-        for (int i = 0; i < monsters.size(); ++i)
+        for (int i = 0; i < actors.size(); ++i)
         {
-            if (monsters[i]->get_point() == point)
+            if (actors[i]->get_point() == point)
             {
-                return monsters[i];
+                return actors[i];
             }
         }
     }
     return nullptr;
 }
 
+void Controller::spawn_medkit()
+{
+    bool medkit_spawned = false;
+    srand(time(NULL));
+    while (!medkit_spawned)
+    {
+        int x = rand() % map.get_width();
+        int y = rand() % map.get_hight();
+        if (map.is_empty(Point(x, y)))
+        {
+            actors.push_back(new MedKit(x, y));
+            map.set_symbol(MEDKIT_SYMBOL, Point(x, y));
+            medkit_spawn_cooldown = 3;
+            ++medkit_count;
+            medkit_spawned = true;
+        }
+    }
+}
+
+void Controller::medkit_count_dec()
+{
+    --medkit_count;
+}
 
 

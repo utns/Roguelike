@@ -20,6 +20,7 @@ class Map
         void find_path(Point point);
         int get_width() const;
         int get_hight() const;
+        void set_symbol(char symbol, Point point);
     private:
         std::vector < std::vector <char> > source;
         std::vector < std::vector <int> > path;

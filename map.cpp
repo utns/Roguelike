@@ -155,3 +155,8 @@ int Map::get_hight() const
 {
     return h;
 }
+
+void Map::set_symbol(char symbol, Point point)
+{
+    source[point.y][point.x] = symbol;
+}
