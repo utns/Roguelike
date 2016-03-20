@@ -29,12 +29,12 @@ void Character::set_hp(int Hp)
 	hp = Hp;
 }
 
-Point Character::get_point() const
+Point Actor::get_point() const
 {
 	return point;
 }
 
-void Character::set_coordinate(Point new_point)
+void Actor::set_coordinate(Point new_point)
 {
     Controller::instance().get_map().move(point, new_point);
     point = new_point;
@@ -69,7 +69,7 @@ char Knight::get_symbol() const
 	return KNIGHT_SYMBOL;
 }
 
-void Knight::collide(Character *character)
+void Knight::collide(Actor *character)
 {
     character->collide(this);
 }
@@ -85,7 +85,7 @@ char Princess::get_symbol() const
 	return PRINCESS_SYMBOL;
 }
 
-void Princess::collide(Character *character)
+void Princess::collide(Actor *character)
 {
     character->collide(this);
 }
@@ -132,7 +132,7 @@ void Monster::collide(Knight *knight)
     }
 }
 
-void Monster::collide(Character *character)
+void Monster::collide(Actor *character)
 {
     character->collide(this);
 }

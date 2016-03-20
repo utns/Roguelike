@@ -14,24 +14,32 @@
 class Knight;
 class Princess;
 class Monster;
-class Character
+
+class Actor
 {
     public:
-        Character(int x, int y): point(x, y) {};
-        virtual void move(Map &map) = 0;
-        virtual char get_symbol() const = 0;
-        int get_hp() const;
-        void set_hp(int Hp);
-        int get_damage() const;
+        Actor(int x, int y): point(x, y) {};
+        virtual ~Actor() {};
         Point get_point() const;
         void set_coordinate(Point new_point);
-        virtual ~Character() {};
-        virtual void collide(Character* character) = 0;
+        virtual void move(Map &map) = 0;
+        virtual char get_symbol() const = 0;
+        virtual void collide(Actor* character) = 0;
         virtual void collide(Knight* knight) = 0;
         virtual void collide(Princess* princess) = 0;
         virtual void collide(Monster* monster) = 0;
     protected:
         Point point;
+};
+
+class Character: public Actor
+{
+    public:
+        Character(int x, int y): Actor(x, y) {};
+        int get_hp() const;
+        void set_hp(int Hp);
+        int get_damage() const;
+    protected:
         int hp, damage;
 };
 
@@ -41,7 +49,7 @@ class Knight: public Character
         Knight(int x, int y): Character(x, y) {hp = 50000; damage = 100;};
         virtual void move(Map &map);
         char get_symbol() const;
-        void collide(Character* character);
+        void collide(Actor *character);
         void collide(Knight* knight) {};
         void collide(Princess* princess) {};
         void collide(Monster* monster);
@@ -53,7 +61,7 @@ class Princess: public Character
         Princess(int x, int y): Character(x, y) {hp = 1; damage = 0;};
         void move(Map &map) {};
         char get_symbol() const;
-        void collide(Character* character);
+        void collide(Actor *character);
         void collide(Knight* knight);
         void collide(Princess* princess) {};
         void collide(Monster* monster) {};
@@ -64,7 +72,7 @@ class Monster: public Character
     public:
         Monster(int x, int y): Character(x, y) {};
         void move(Map &map);
-        void collide(Character* character);
+        void collide(Actor *character);
         void collide(Knight* knight);
         void collide(Princess* princess) {};
         void collide(Monster* monster) {};
