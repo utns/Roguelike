@@ -11,11 +11,18 @@
 #define ZOMBIE_SYMBOL 'Z'
 #define DRAGON_SYMBOL 'D'
 #define MEDKIT_SYMBOL '+'
+#define WIZARD_SYMBOL 'W'
+#define ZOMBIE_SPAWNER_SYMBOL '!'
 
 class Character;
 class Knight;
 class Princess;
 class Monster;
+class Zombie;
+class Dragon;
+class Wizard;
+class MedKit;
+class Fireball;
 
 class Actor
 {
@@ -31,8 +38,27 @@ class Actor
         virtual void collide(Knight* knight) {};
         virtual void collide(Princess* princess) {};
         virtual void collide(Monster* monster) {};
+        virtual void collide(MedKit* medkit) {};
+        virtual void collide(Fireball* fireball) {};
     protected:
         Point point;
+};
+
+class Spawner: public Actor
+{
+    public:
+        Spawner(int x, int y): Actor(x, y) {};
+    protected:
+        int spawn_cooldawn;
+};
+
+class Zombie_spawner: public Spawner
+{
+    public:
+        Zombie_spawner(int x, int y): Spawner(x, y) {spawn_cooldawn = 7;};
+        void move(Map &map);
+        char get_symbol() const;
+        void collide(Actor* actor);
 };
 
 class Modificator: public Actor
@@ -47,14 +73,31 @@ class MedKit: public Modificator
         MedKit(int x, int y): Modificator(x, y) {};
         void move(Map &map) {};
         char get_symbol() const;
-        void collide(Actor *actor);
+        void collide(Actor* actor);
         void collide(Character* character);
         void collide(Knight* knight);
         void collide(Monster* monster);
+        void collide(Fireball* fireball);
     private:
-        int hp_restore = 500000;
+        int hp_bonus = 50;
 };
 
+class Fireball: public Actor
+{
+    public:
+        Fireball(int x, int y, Point dir): Actor(x, y), dir(dir)  {damage = 100;};
+        void move(Map &map);
+        char get_symbol() const;
+        void collide(Actor* actor);
+        void collide(Fireball* fireball);
+        void collide(MedKit* medkit);
+        void collide(Character* character);
+        int get_damage();
+    private:
+        int damage;
+        Point dir;
+        static std::map <Point, char> symbols;
+};
 
 class Character: public Actor
 {
@@ -64,6 +107,7 @@ class Character: public Actor
         void set_hp(int Hp);
         int get_damage() const;
         int get_max_hp() const;
+        void collide(Fireball* fireball);
     protected:
         int hp, damage, max_hp;
 };
@@ -101,6 +145,8 @@ class Monster: public Character
         void collide(Knight *knight);
         void collide(Princess *princess) {};
         void collide(Monster *monster) {};
+    protected:
+        Point get_next_point();
 };
 
 class Dragon: public Monster
@@ -115,4 +161,14 @@ class Zombie: public Monster
     public:
         Zombie(int x, int y): Monster(x, y) {hp = 100; damage = 10; max_hp = 100;};
         char get_symbol() const;
+};
+
+class Wizard: public Monster
+{
+    public:
+        Wizard(int x, int y): Monster(x, y) {hp = 50; damage = 1; max_hp = 50;}
+        void move(Map &map);
+        char get_symbol() const;
+    protected:
+        int spell_cooldown = 1;
 };

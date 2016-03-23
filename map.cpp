@@ -41,62 +41,27 @@ void Map::display()
 
 bool Map::is_wall(Point point) const
 {
-    if (source[point.y][point.x] == '#')
-    {
-        return true;
-    }
-    else 
-    {
-        return false;
-    }
+    return source[point.y][point.x] == '#';
 }
 
 bool Map::is_princess(Point point) const
 {
-    if (source[point.y][point.x] == PRINCESS_SYMBOL)
-    {
-        return true;
-    }
-    else 
-    {
-        return false;
-    }
+    return source[point.y][point.x] == PRINCESS_SYMBOL;
 }
 
 bool Map::is_monster(Point point) const
 {
-    if (source[point.y][point.x] == ZOMBIE_SYMBOL || source[point.y][point.x] == DRAGON_SYMBOL)
-    {
-        return true;
-    }
-    else 
-    {
-        return false;
-    }
+    return source[point.y][point.x] == ZOMBIE_SYMBOL || source[point.y][point.x] == DRAGON_SYMBOL;
 }
 
 bool Map::is_empty(Point point) const
 {
-    if (source[point.y][point.x] == '.')
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return source[point.y][point.x] == '.';
 }
 
 bool Map::is_knight(Point point) const
 {
-    if (source[point.y][point.x] == KNIGHT_SYMBOL)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return source[point.y][point.x] == KNIGHT_SYMBOL;
 }
 
 void Map::move(Point point1, Point point2)

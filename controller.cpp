@@ -45,10 +45,20 @@ void Controller::find_characters()
                     actors.push_back(new Zombie(j, i));
                     break;
                 }
+                case WIZARD_SYMBOL:
+                {
+                    actors.push_back(new Wizard(j, i));
+                    break;
+                }
                 case MEDKIT_SYMBOL:
                 {
                     ++medkit_count;
                     actors.push_back(new MedKit(j, i));
+                    break;
+                }
+                case ZOMBIE_SPAWNER_SYMBOL:
+                {
+                    actors.push_back(new Zombie_spawner(j, i));
                     break;
                 }
             }
@@ -62,15 +72,24 @@ void Controller::game_loop()
     while(!game_over)
     {
         clear();
+//        draw_actors();
         map.display();
         print_log();
         hit_log.clear();
         printw("HP: %d\n", knight->get_hp());
         knight->move(map);
         map.find_path(knight->get_point());
-        for (auto actor: actors)
+        for (int i = 0; i < actors.size(); ++i)
         {
-            actor->move(map);
+            if (actors[i] != nullptr)
+            {
+                actors[i]->move(map);
+            }
+            else
+            {
+                actors.erase(actors.begin() + i);
+                --i;
+            }
         }
         if (medkit_spawn_cooldown <= 0 && medkit_count < 5)
         {
@@ -96,7 +115,7 @@ int Controller::get_actor_num(Point point)
 {
     for (int i = 0; i < actors.size(); ++i)
     {
-        if (actors[i]->get_point() == point)
+        if (actors[i] != nullptr && actors[i]->get_point() == point)
         {
             return i;
         }
@@ -107,7 +126,8 @@ void Controller::delete_actor(Point point)
 {
     int i = get_actor_num(point);
     delete actors[i];
-    actors.erase(actors.begin() + i);
+    actors[i] = nullptr;
+    map.set_symbol('.', point);
 }
 
 void Controller::print_log()
@@ -120,7 +140,7 @@ void Controller::print_log()
 
 Controller& Controller::instance()
 {
-    static Controller controller("map.txt");
+    static Controller controller("map1.txt");
     return controller;
 }
 
@@ -150,10 +170,10 @@ map <string, Point > Controller::directions =
     {"h", Point(-1, 0)},
     {"j", Point(0, 1)},
     {"l", Point(1, 0)},
-    {"y", Point(-1, -1)},
-    {"u", Point(1, -1)},
-    {"b", Point(-1, 1)},
-    {"n", Point(1, 1)},
+//    {"y", Point(-1, -1)},
+//    {"u", Point(1, -1)},
+//    {"b", Point(-1, 1)},
+//    {"n", Point(1, 1)},
 };
 
 Actor * Controller::get_actor(Point point)
@@ -170,7 +190,7 @@ Actor * Controller::get_actor(Point point)
     {
         for (int i = 0; i < actors.size(); ++i)
         {
-            if (actors[i]->get_point() == point)
+            if (actors[i] != nullptr && actors[i]->get_point() == point)
             {
                 return actors[i];
             }
@@ -203,4 +223,23 @@ void Controller::medkit_count_dec()
     --medkit_count;
 }
 
+void Controller::create_fireball(Point pos, Point dir)
+{
+    actors.push_back(new Fireball(pos.x + dir.x, pos.y + dir.y, dir));
+    map.set_symbol(actors.back()->get_symbol(), actors.back()->get_point());
+}
 
+void Controller::draw_actors()
+{
+    map.set_symbol(knight->get_symbol(), knight->get_point());
+    for (int i = 0; i < actors.size(); ++i)
+    {
+        map.set_symbol(actors[i]->get_symbol(), actors[i]->get_point());
+    }
+}
+
+void Controller::push_actor(Actor* actor)
+{
+    actors.push_back(actor);
+    map.set_symbol(actor->get_symbol(), actor->get_point());
+}

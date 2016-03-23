@@ -23,6 +23,9 @@ class Controller
         const static std::map <std::string, Point > &get_directions();
         void spawn_medkit();
         void medkit_count_dec();
+        void create_fireball(Point pos, Point dir);
+        void draw_actors();
+        void push_actor(Actor* actor);
     private:
         Controller(std::string file_name): map(file_name) {};
         Map map;
