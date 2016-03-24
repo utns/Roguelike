@@ -61,6 +61,11 @@ void Controller::find_characters()
                     actors.push_back(new Zombie_spawner(j, i));
                     break;
                 }
+                case DRAGON_SPAWNER_SYMBOL:
+                {
+                    actors.push_back(new Dragon_spawner(j, i));
+                    break;
+                }
             }
         }
     }

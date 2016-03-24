@@ -13,6 +13,7 @@
 #define MEDKIT_SYMBOL '+'
 #define WIZARD_SYMBOL 'W'
 #define ZOMBIE_SPAWNER_SYMBOL '!'
+#define DRAGON_SPAWNER_SYMBOL '$'
 
 class Character;
 class Knight;
@@ -56,6 +57,15 @@ class Zombie_spawner: public Spawner
 {
     public:
         Zombie_spawner(int x, int y): Spawner(x, y) {spawn_cooldawn = 7;};
+        void move(Map &map);
+        char get_symbol() const;
+        void collide(Actor* actor);
+};
+
+class Dragon_spawner: public Spawner
+{
+    public:
+        Dragon_spawner(int x, int y): Spawner(x, y) {spawn_cooldawn = 15;};
         void move(Map &map);
         char get_symbol() const;
         void collide(Actor* actor);

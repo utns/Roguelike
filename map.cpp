@@ -47,6 +47,7 @@ bool Map::is_wall(Point point) const
 bool Map::is_princess(Point point) const
 {
     return source[point.y][point.x] == PRINCESS_SYMBOL;
+
 }
 
 bool Map::is_monster(Point point) const
