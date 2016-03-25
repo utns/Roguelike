@@ -1,7 +1,7 @@
 #pragma once
 
 #include "map.h"
-#include "characters.h"
+#include "actors.h"
 #include <string>
 #include <vector>
 #include <list>

@@ -5,7 +5,7 @@
 #include <time.h>
 #include <string>
 #include "map"
-#include "characters.h"
+#include "actors.h"
 #include "controller.h"
 #include "ncurses.h"
 #include <list>

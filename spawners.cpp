@@ -1,5 +1,5 @@
 #include "controller.h"
-#include "characters.h"
+#include "actors.h"
 #include "Point.h"
 
 void Spawner::spawn_monster(int spawn_cooldawn)

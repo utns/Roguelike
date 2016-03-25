@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "characters.h"
+#include "actors.h"
 #include "map.h"
 #include "controller.h"
 #include "ncurses.h"

@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include "map.h"
-#include "characters.h"
+#include "actors.h"
 #include "controller.h"
 #include "ncurses.h"
 #include "Point.h"
