@@ -41,6 +41,7 @@ class Actor
         virtual void collide(Monster* monster) {};
         virtual void collide(MedKit* medkit) {};
         virtual void collide(Fireball* fireball) {};
+        void set_point(Point new_point);
     protected:
         Point point;
 };
@@ -50,25 +51,31 @@ class Spawner: public Actor
     public:
         Spawner(int x, int y): Actor(x, y) {};
     protected:
-        int spawn_cooldawn;
+        Actor* actor = nullptr;
+        int cur_cooldawn = 0;
+        void spawn_monster(int spawn_cooldawn);
 };
 
 class Zombie_spawner: public Spawner
 {
     public:
-        Zombie_spawner(int x, int y): Spawner(x, y) {spawn_cooldawn = 7;};
+        Zombie_spawner(int x, int y): Spawner(x, y) {};
         void move(Map &map);
         char get_symbol() const;
         void collide(Actor* actor);
+    private:
+        static int spawn_cooldawn;
 };
 
 class Dragon_spawner: public Spawner
 {
     public:
-        Dragon_spawner(int x, int y): Spawner(x, y) {spawn_cooldawn = 15;};
+        Dragon_spawner(int x, int y): Spawner(x, y) {};
         void move(Map &map);
         char get_symbol() const;
         void collide(Actor* actor);
+    private:
+        static int spawn_cooldawn;
 };
 
 class Modificator: public Actor
@@ -178,7 +185,7 @@ class Wizard: public Monster
         void move(Map &map);
         char get_symbol() const;
     protected:
-        int cur_colldown = 1;
+        int cur_colldown = 0;
         static int spell_cooldown;
         Point get_dir();
 };

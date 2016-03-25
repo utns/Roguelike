@@ -52,7 +52,8 @@ bool Map::is_princess(Point point) const
 
 bool Map::is_monster(Point point) const
 {
-    return source[point.y][point.x] == ZOMBIE_SYMBOL || source[point.y][point.x] == DRAGON_SYMBOL;
+    return source[point.y][point.x] == ZOMBIE_SYMBOL || source[point.y][point.x] == DRAGON_SYMBOL
+            || source[point.y][point.x] == WIZARD_SYMBOL;
 }
 
 bool Map::is_empty(Point point) const
