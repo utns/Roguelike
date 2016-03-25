@@ -8,6 +8,7 @@
 #include "characters.h"
 #include "controller.h"
 #include "ncurses.h"
+#include <list>
 
 using namespace std;
 
@@ -84,16 +85,15 @@ void Controller::game_loop()
         printw("HP: %d\n", knight->get_hp());
         knight->move(map);
         map.find_path(knight->get_point());
-        for (int i = 0; i < actors.size(); ++i)
+        for (auto actor = actors.begin(); actor != actors.end(); ++actor)
         {
-            if (actors[i] != nullptr)
+            if ((*actor) != nullptr)
             {
-                actors[i]->move(map);
+                (*actor)->move(map);
             }
             else
             {
-                actors.erase(actors.begin() + i);
-                --i;
+                actors.erase(actor--);
             }
         }
         if (medkit_spawn_cooldown <= 0 && medkit_count < 5)
@@ -116,22 +116,22 @@ void Controller::game_loop()
     }
 }
 
-int Controller::get_actor_num(Point point)
+list<Actor *>::iterator Controller::get_actor_num(Point point)
 {
-    for (int i = 0; i < actors.size(); ++i)
+    for (auto actor = actors.begin(); actor != actors.end(); ++actor)
     {
-        if (actors[i] != nullptr && actors[i]->get_point() == point)
+        if ((*actor) != nullptr && (*actor)->get_point() == point)
         {
-            return i;
+            return actor;
         }
     }
 }    
 
 void Controller::delete_actor(Point point)
 {
-    int i = get_actor_num(point);
-    delete actors[i];
-    actors[i] = nullptr;
+    auto actor = get_actor_num(point);
+    delete (*actor);
+    (*actor) = nullptr;
     map.set_symbol('.', point);
 }
 
@@ -193,11 +193,11 @@ Actor * Controller::get_actor(Point point)
     }
     else
     {
-        for (int i = 0; i < actors.size(); ++i)
+        for (auto actor = actors.begin(); actor != actors.end(); ++actor)
         {
-            if (actors[i] != nullptr && actors[i]->get_point() == point)
+            if ((*actor) != nullptr && (*actor)->get_point() == point)
             {
-                return actors[i];
+                return (*actor);
             }
         }
     }
@@ -230,21 +230,21 @@ void Controller::medkit_count_dec()
 
 void Controller::create_fireball(Point pos, Point dir)
 {
-    actors.push_back(new Fireball(pos.x + dir.x, pos.y + dir.y, dir));
-    map.set_symbol(actors.back()->get_symbol(), actors.back()->get_point());
+    actors.push_front(new Fireball(pos.x, pos.y, dir));
+    map.set_symbol(actors.front()->get_symbol(), actors.front()->get_point());
 }
 
 void Controller::draw_actors()
 {
     map.set_symbol(knight->get_symbol(), knight->get_point());
-    for (int i = 0; i < actors.size(); ++i)
+    for (auto actor = actors.begin(); actor != actors.end(); ++actor)
     {
-        map.set_symbol(actors[i]->get_symbol(), actors[i]->get_point());
+        map.set_symbol((*actor)->get_symbol(), (*actor)->get_point());
     }
 }
 
 void Controller::push_actor(Actor* actor)
 {
-    actors.push_back(actor);
+    actors.push_front(actor);
     map.set_symbol(actor->get_symbol(), actor->get_point());
 }

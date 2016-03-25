@@ -4,6 +4,7 @@
 #include "characters.h"
 #include <string>
 #include <vector>
+#include <list>
 #include "Point.h"
 
 class Controller
@@ -12,7 +13,7 @@ class Controller
         Map &get_map();
         void find_characters();
         void game_loop();
-        int get_actor_num(Point point);
+        std::list<Actor *>::iterator get_actor_num(Point point);
         void delete_actor(Point point);
         void push_log(std::string s);
         void print_log();
@@ -31,7 +32,7 @@ class Controller
         Map map;
         Knight *knight;
         Princess *princess;
-        std::vector <Actor*> actors;
+        std::list <Actor*> actors;
         std::vector <std::string> hit_log;
         static std::map <std::string, Point > directions;
         int medkit_count = 0;
