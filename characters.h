@@ -125,12 +125,10 @@ class Character: public Actor
 class Knight: public Character
 {
     public:
-        Knight(int x, int y): Character(x, y) {hp = 50000; damage = 100; max_hp = 50000;};
+        Knight(int x, int y): Character(x, y) {hp = 50000000; damage = 100; max_hp = 50000;};
         virtual void move(Map &map);
         char get_symbol() const;
         void collide(Actor *actor);
-        void collide(Knight *knight) {};
-        void collide(Princess *princess) {};
         void collide(Monster *monster);
 };
 
@@ -142,8 +140,8 @@ class Princess: public Character
         char get_symbol() const;
         void collide(Actor *actor);
         void collide(Knight *knight);
-        void collide(Princess *princess) {};
         void collide(Monster *monster) {};
+        void collide(Fireball *fireball);
 };
 
 class Monster: public Character 
@@ -181,4 +179,5 @@ class Wizard: public Monster
         char get_symbol() const;
     protected:
         int spell_cooldown = 1;
+       Point get_dir();
 };

@@ -108,6 +108,10 @@ void Princess::collide(Knight *knight)
     hp = -1;
 }
 
+void Princess::collide(Fireball *fireball)
+{
+    Controller::instance().get_knight().set_hp(-1);
+}
 
 void Monster::move(Map &map)
 {
@@ -216,9 +220,9 @@ char Wizard::get_symbol() const
 void Wizard::move(Map &map)
 {
     --spell_cooldown;
-    Point dir = get_next_point() - point;
+    Point dir = get_dir();
     bool find_knight = false;
-    Point next_point = point;
+    Point next_point = point + dir;
     while (!find_knight)
     {
         next_point = next_point + dir;
@@ -228,7 +232,7 @@ void Wizard::move(Map &map)
             if (spell_cooldown <= 0)
             {
                 spell_cooldown = 2;
-                Controller::instance().create_fireball(point, dir);
+                Controller::instance().create_fireball(point + dir, dir);
             }
         }
         else if (map.is_wall(next_point))
@@ -240,6 +244,25 @@ void Wizard::move(Map &map)
     {
         Monster::move(map);
     }
+}
+
+Point Wizard::get_dir()
+{
+    Map& map = Controller::instance().get_map();
+    vector < vector <int> > path = map.get_path();
+    int min_path = INT_MAX;
+    Point new_point = point;
+    vector <Point> directions = {Point(0, 1), Point(0, -1), Point(1, 0), Point(-1, 0)};
+    for (auto dir: directions)
+    {
+        Point t_point = point + dir;
+        if (path[t_point.y][t_point.x] < min_path && ((!map.is_monster(t_point) && !map.is_wall(t_point) && !map.is_princess(t_point)) || map.is_knight(t_point)))
+        {
+            min_path = path[t_point.y][t_point.x];
+            new_point = t_point;
+        }
+    }
+    return new_point - point;
 }
 
 
@@ -353,7 +376,7 @@ void Dragon_spawner::move(Map &map)
             {
                 Actor* zombie = new Dragon(new_point.x, new_point.y);
                 Controller::instance().push_actor(zombie);
-                spawn_cooldawn = 7;
+                spawn_cooldawn = 15;
                 break;
             }
         }
