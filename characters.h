@@ -178,6 +178,7 @@ class Wizard: public Monster
         void move(Map &map);
         char get_symbol() const;
     protected:
-        int spell_cooldown = 1;
-       Point get_dir();
+        int cur_colldown = 1;
+        static int spell_cooldown;
+        Point get_dir();
 };

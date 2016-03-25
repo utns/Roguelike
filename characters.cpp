@@ -211,6 +211,7 @@ void MedKit::collide(Fireball *fireball)
     Controller::instance().delete_actor(fireball->get_point());
 }
 
+int Wizard::spell_cooldown = 2;
 
 char Wizard::get_symbol() const
 {
@@ -219,7 +220,7 @@ char Wizard::get_symbol() const
 
 void Wizard::move(Map &map)
 {
-    --spell_cooldown;
+    --cur_colldown;
     Point dir = get_dir();
     bool find_knight = false;
     Point next_point = point + dir;
@@ -229,9 +230,9 @@ void Wizard::move(Map &map)
         if (map.is_knight(next_point))
         {
             find_knight = true;
-            if (spell_cooldown <= 0)
+            if (cur_colldown <= 0)
             {
-                spell_cooldown = 2;
+                cur_colldown = spell_cooldown;
                 Controller::instance().create_fireball(point + dir, dir);
             }
         }
