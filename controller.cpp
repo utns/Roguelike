@@ -78,24 +78,13 @@ void Controller::game_loop()
     while(!game_over)
     {
         clear();
-//        draw_actors();
         map.display();
         print_log();
         hit_log.clear();
         printw("HP: %d\n", knight->get_hp());
         knight->move(map);
         map.find_path(knight->get_point());
-        for (auto actor = actors.begin(); actor != actors.end(); ++actor)
-        {
-            if ((*actor) != nullptr)
-            {
-                (*actor)->move(map);
-            }
-            else
-            {
-                actors.erase(actor--);
-            }
-        }
+        actors_move();
         if (medkit_spawn_cooldown <= 0 && medkit_count < 5)
         {
             spawn_medkit();
@@ -116,7 +105,7 @@ void Controller::game_loop()
     }
 }
 
-list<Actor *>::iterator Controller::get_actor_num(Point point)
+list<Actor *>::iterator Controller::get_actor_iter(Point point)
 {
     for (auto actor = actors.begin(); actor != actors.end(); ++actor)
     {
@@ -129,7 +118,7 @@ list<Actor *>::iterator Controller::get_actor_num(Point point)
 
 void Controller::delete_actor(Point point)
 {
-    auto actor = get_actor_num(point);
+    auto actor = get_actor_iter(point);
     delete (*actor);
     (*actor) = nullptr;
     map.set_symbol('.', point);
@@ -247,4 +236,19 @@ void Controller::push_actor(Actor* actor)
 {
     actors.push_front(actor);
     map.set_symbol(actor->get_symbol(), actor->get_point());
+}
+
+void Controller::actors_move()
+{
+    for (auto actor = actors.begin(); actor != actors.end(); ++actor)
+    {
+        if ((*actor) != nullptr)
+        {
+            (*actor)->move(map);
+        }
+        else
+        {
+            actors.erase(actor--);
+        }
+    }
 }

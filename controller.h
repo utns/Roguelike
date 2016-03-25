@@ -13,7 +13,7 @@ class Controller
         Map &get_map();
         void find_characters();
         void game_loop();
-        std::list<Actor *>::iterator get_actor_num(Point point);
+        std::list<Actor *>::iterator get_actor_iter(Point point);
         void delete_actor(Point point);
         void push_log(std::string s);
         void print_log();
@@ -27,6 +27,7 @@ class Controller
         void create_fireball(Point pos, Point dir);
         void draw_actors();
         void push_actor(Actor* actor);
+        void actors_move();
     private:
         Controller(std::string file_name): map(file_name) {};
         Map map;
