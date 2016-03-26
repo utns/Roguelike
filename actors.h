@@ -96,7 +96,7 @@ class MedKit: public Modificator
         void collide(Monster* monster);
         void collide(Fireball* fireball);
     private:
-        int hp_bonus = 50;
+        int hp_bonus = 100;
 };
 
 class Fireball: public Actor
@@ -132,7 +132,7 @@ class Character: public Actor
 class Knight: public Character
 {
     public:
-        Knight(int x, int y): Character(x, y) {hp = 50000000; damage = 100; max_hp = 50000;};
+        Knight(int x, int y): Character(x, y) {hp = 5000; damage = 100; max_hp = 5000;};
         virtual void move(Map &map);
         char get_symbol() const;
         void collide(Actor *actor);
@@ -151,7 +151,7 @@ class Princess: public Character
         void collide(Fireball *fireball);
 };
 
-class Monster: public Character 
+class Monster: public Character
 {
     public:
         Monster(int x, int y): Character(x, y) {};
@@ -169,7 +169,7 @@ class Dragon: public Monster
     public:
         Dragon(int x, int y): Monster(x, y) {hp = 250; damage = 50; max_hp = 250;};
         char get_symbol() const;
-}; 
+};
 
 class Zombie: public Monster
 {

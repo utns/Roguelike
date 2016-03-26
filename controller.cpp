@@ -95,7 +95,7 @@ void Controller::game_loop()
             printw("YOU WIN!!\n");
             game_over = true;
         }
-        else if (knight->get_hp() <= 0)
+        else if (knight == nullptr || knight->get_hp() <= 0)
         {
             clear();
             printw("YOU LOSE!!!\n");
@@ -114,14 +114,18 @@ list<Actor *>::iterator Controller::get_actor_iter(Point point)
             return actor;
         }
     }
-}    
+    return actors.end();
+}
 
 void Controller::delete_actor(Point point)
 {
     auto actor = get_actor_iter(point);
-    delete (*actor);
-    (*actor) = nullptr;
-    map.set_symbol('.', point);
+    if (actor != actors.end())
+    {
+        delete (*actor);
+        (*actor) = nullptr;
+        map.set_symbol('.', point);
+    }
 }
 
 void Controller::print_log()
@@ -160,10 +164,10 @@ const std::map <std::string, Point > &Controller::get_directions()
 
 map <string, Point > Controller::directions =
 {
-    {"k", Point(0, -1)},
-    {"h", Point(-1, 0)},
-    {"j", Point(0, 1)},
-    {"l", Point(1, 0)},
+    {"w", Point(0, -1)},
+    {"a", Point(-1, 0)},
+    {"s", Point(0, 1)},
+    {"d", Point(1, 0)},
     {"y", Point(-1, -1)},
     {"u", Point(1, -1)},
     {"b", Point(-1, 1)},
