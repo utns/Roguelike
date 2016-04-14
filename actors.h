@@ -5,6 +5,7 @@
 #include "map.h"
 #include "Point.h"
 #include "ncurses.h"
+#include "config.h"
 
 #define KNIGHT_SYMBOL 'K'
 #define PRINCESS_SYMBOL 'P'
@@ -102,7 +103,7 @@ class MedKit: public Modificator
 class Fireball: public Actor
 {
     public:
-        Fireball(int x, int y, Point dir): Actor(x, y), dir(dir)  {damage = 100;};
+        Fireball(int x, int y, Point dir): Actor(x, y), dir(dir)  {damage = Config::instance().fireball_damage;};
         void move(Map &map);
         char get_symbol() const;
         void collide(Actor* actor);
@@ -132,7 +133,7 @@ class Character: public Actor
 class Knight: public Character
 {
     public:
-        Knight(int x, int y): Character(x, y) {hp = 5000; damage = 100; max_hp = 5000;};
+        Knight(int x, int y): Character(x, y) {hp = max_hp = Config::instance().knight_hp; damage = Config::instance().knight_damage;};
         virtual void move(Map &map);
         char get_symbol() const;
         void collide(Actor *actor);
@@ -142,7 +143,7 @@ class Knight: public Character
 class Princess: public Character
 {
     public:
-        Princess(int x, int y): Character(x, y) {hp = 1; damage = 0; max_hp = 1;};
+        Princess(int x, int y): Character(x, y) {hp = max_hp = Config::instance().princess_hp; damage = Config::instance().princess_damage;};
         void move(Map &map) {};
         char get_symbol() const;
         void collide(Actor *actor);
@@ -167,21 +168,21 @@ class Monster: public Character
 class Dragon: public Monster
 {
     public:
-        Dragon(int x, int y): Monster(x, y) {hp = 250; damage = 50; max_hp = 250;};
+        Dragon(int x, int y): Monster(x, y) {hp = max_hp = Config::instance().dragon_hp; damage = Config::instance().dragon_damage;};
         char get_symbol() const;
 };
 
 class Zombie: public Monster
 {
     public:
-        Zombie(int x, int y): Monster(x, y) {hp = 100; damage = 10; max_hp = 100;};
+        Zombie(int x, int y): Monster(x, y) {hp = max_hp = Config::instance().zombie_hp; damage = Config::instance().zombie_damage;};
         char get_symbol() const;
 };
 
 class Wizard: public Monster
 {
     public:
-        Wizard(int x, int y): Monster(x, y) {hp = 50; damage = 1; max_hp = 50;}
+        Wizard(int x, int y): Monster(x, y) {hp = max_hp = Config::instance().wizard_hp; damage = Config::instance().wizard_damage;}
         void move(Map &map);
         char get_symbol() const;
     protected:

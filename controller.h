@@ -28,6 +28,7 @@ class Controller
         void draw_actors();
         void push_actor(Actor* actor);
         void actors_move();
+        ~Controller();
     private:
         Controller(std::string file_name): map(file_name) {};
         Map map;

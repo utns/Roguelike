@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "controller.h"
 #include "ncurses.h"
+#include "config.h"
 
 using namespace std;
 

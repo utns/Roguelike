@@ -256,3 +256,8 @@ void Controller::actors_move()
         }
     }
 }
+
+Controller::~Controller()
+{
+    endwin();
+}

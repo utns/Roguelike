@@ -1,6 +1,7 @@
 #include "controller.h"
 #include "actors.h"
 #include "Point.h"
+#include "config.h"
 
 void Spawner::spawn_monster(int spawn_cooldawn)
 {
@@ -22,7 +23,7 @@ void Spawner::spawn_monster(int spawn_cooldawn)
     }
 }
 
-int Zombie_spawner::spawn_cooldawn = 7;
+int Zombie_spawner::spawn_cooldawn = Config::instance().zombie_spawn_cooldawn;
 
 char Zombie_spawner::get_symbol() const
 {
@@ -43,7 +44,7 @@ void Zombie_spawner::collide(Actor *actor)
     actor->collide(this);
 }
 
-int Dragon_spawner::spawn_cooldawn = 15;
+int Dragon_spawner::spawn_cooldawn = Config::instance().dragon_spawn_cooldawn;
 
 char Dragon_spawner::get_symbol() const
 {
